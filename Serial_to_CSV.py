@@ -9,7 +9,7 @@ import paho.mqtt.client as mqtt
 import json
 
 # Constants for CSV handling
-CSVPath     = '/home/pi/ngamotu'
+CSVPath     = '/home/pi/ngamotu-data'
 CSV         = '.csv'
 CSVFileBase = 'ngamotu_sensors_'
 CrLf        = '\r\n'
@@ -22,10 +22,10 @@ MQTT_USER = 'penguin'
 MQTT_PASSWORD = 'penguin2023'
 
 # Default location of serial port on pre 3 Pi models
-#SERIAL_PORT =  "/dev/ttyAMA0"
+SERIAL_PORT =  "/dev/ttyAMA0"
 
 # Default location of serial port on Pi models 3 and Zero
-SERIAL_PORT =   "/dev/ttyS0"
+# SERIAL_PORT =   "/dev/ttyS0"
 
 #This sets up the serial port specified above. baud rate is the bits per second timeout seconds
 #port = serial.Serial(SERIAL_PORT, baudrate=2400, timeout=5)
@@ -40,12 +40,21 @@ client.connect(MQTT_BROKER,MQTT_PORT)
 client.loop_start()
 qos = 10
 timestamp = time.time()
+error = 0 #have not had and errors yet
 
 while True:
   try:
     rcv = port.readline() #read buffer until cr/lf
-    # print("Serial Readline Data = " + rcv)
-    rcv = rcv.rstrip("\r\n")
+    print("Serial Readline Data  = ", rcv)
+
+#    rcv = str(rcv[:-3]) # This doesn't work.  I'd like to know why!
+    rcv = str(rcv[:-2])
+    rcv = rcv[:-1]
+
+#    rcv = rcv.rstrip("\r\n")  # Previous line used on site 6 Jan 2023 (Python 2)
+
+    print("Serial String Striped = ", rcv)
+
     synch,node,channel,data,cs = rcv.split(",")
     print("rcv.split Data = : " + node + " " + channel + " " + data + " " + cs)
     #time.sleep(1)
