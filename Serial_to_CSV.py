@@ -4,7 +4,7 @@
 # by Steve Cosgrove 6 October 2023
 # CSV function based on  https://github.com/SteveCossy/IOT/blob/master/LoRaReAd/MQTTUtils.py#L58
 
-import datetime, time, serial, logging, os, csv
+import datetime, time, serial, logging, os, csv, toml
 import paho.mqtt.client as mqtt
 import json
 
@@ -14,23 +14,30 @@ CSV         = '.csv'
 CSVFileBase = 'ngamotu_sensors_'
 CrLf        = '\r\n'
 FIELDNAMES  = ['time','channel','data']
+HOME_DIR    = os.environ['HOME']
+# HOME_DIR  =    '/home/pi'
+AUTH_FILE   = 'MQTTdetails.txt'
+ConfPathFile = os.path.join(HOME_DIR, AUTH_FILE)
 
-# MQTT Params
-MQTT_BROKER = 'penguin.econode.nz'
-MQTT_PORT = 2883
-MQTT_USER = 'penguin'
-MQTT_PASSWORD = 'penguin2023'
+# MQTT Params read from AUTH_FILE defined above
+ConfigDict = toml.load(ConfPathFile)
+MQTTparam = ConfigDict.get('econode')
+# print (MQTTparam)
+MQTT_BROKER   = MQTTparam['Broker']
+MQTT_PORT     = MQTTparam['Port']
+MQTT_USER     = MQTTparam['User']
+MQTT_PASSWORD = MQTTparam['Password']
 
-# Default location of serial port on pre 3 Pi models
+# Default location of serial port on non wireless models (Original Zero and pre 3 Pi models)
 SERIAL_PORT =  "/dev/ttyAMA0"
 
-# Default location of serial port on Pi models 3 and Zero
+# Default location of serial port on Pi models 3 and Zero W
 # SERIAL_PORT =   "/dev/ttyS0"
 
 #This sets up the serial port specified above. baud rate is the bits per second timeout seconds
 #port = serial.Serial(SERIAL_PORT, baudrate=2400, timeout=5)
 
-#This sets up the serial port specified above. baud rate and WAITS for any cr/lf (new blob of data from picaxe)
+#This sets up the serial port specified above. baud rate  and no timeout
 port = serial.Serial(SERIAL_PORT, baudrate=2400)
 
 #Connect to MQTT
@@ -40,7 +47,7 @@ client.connect(MQTT_BROKER,MQTT_PORT)
 client.loop_start()
 qos = 10
 timestamp = time.time()
-error = 0 #have not had and errors yet
+error = 0 #have not had any errors yet
 
 while True:
   try:
@@ -53,7 +60,7 @@ while True:
 
 #    rcv = rcv.rstrip("\r\n")  # Previous line used on site 6 Jan 2023 (Python 2)
 
-    print("Serial String Striped = ", rcv)
+#    print("Serial String Striped = ", rcv)
 
     synch,node,channel,data,cs = rcv.split(",")
     print("rcv.split Data = : " + node + " " + channel + " " + data + " " + cs)
