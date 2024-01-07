@@ -3,7 +3,7 @@
 
 import os
 
-if not os.path.isfile('/dev/ttyS0'):
+if os.path.isfile('/dev/ttyS0'):
    # We have a Pi with built-in Wireless so use S0
    Serial_Port = '/dev/ttyS0'
 else:
