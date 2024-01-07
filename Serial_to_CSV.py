@@ -20,9 +20,17 @@ AUTH_FILE   = 'MQTTdetails.txt'
 ConfPathFile = os.path.join(HOME_DIR, AUTH_FILE)
 
 # MQTT Params read from AUTH_FILE defined above
+# The format of the file at ConfPathFile needs to be:
+# [econode]
+# Broker = '<Broker URL>'
+# Port = <Broker port number>
+# User = '<Broker username>'
+# Password = '<Broker password>'
+# https://toml.io/en/
+
 ConfigDict = toml.load(ConfPathFile)
 MQTTparam = ConfigDict.get('econode')
-# print (MQTTparam)
+print (MQTTparam)
 MQTT_BROKER   = MQTTparam['Broker']
 MQTT_PORT     = MQTTparam['Port']
 MQTT_USER     = MQTTparam['User']
@@ -37,7 +45,7 @@ else:
    # Default location of serial port on non wireless models (Original Zero and pre 3 Pi models)
    SERIAL_PORT = '/dev/ttyAMA0'
 
-print("Using "+SERIAL_PORT)
+print ("Using "+SERIAL_PORT)
 
 #This sets up the serial port specified above. baud rate  and no timeout
 port = serial.Serial(SERIAL_PORT, baudrate=2400)
@@ -80,7 +88,7 @@ while True:
         qos = 1
     else :
       qos = qos + 1
-      # print("+1" , qos)
+      print('Checksum Passed! QOS = ' , qos)
       if qos > 100 :
         qos = 100
       CurrentTime = datetime.datetime.now().isoformat()
@@ -140,6 +148,3 @@ while True:
     #client.virtualWrite(22,error)/1
     #if Data Packet corrupt or malformed then...
     print("Data Packet corrupt or malformed")
-
-
-
