@@ -28,14 +28,16 @@ MQTT_PORT     = MQTTparam['Port']
 MQTT_USER     = MQTTparam['User']
 MQTT_PASSWORD = MQTTparam['Password']
 
-# Default location of serial port on non wireless models (Original Zero and pre 3 Pi models)
-SERIAL_PORT =  "/dev/ttyAMA0"
+if os.path.isfile('/dev/ttyS0'):
+   # We have a Pi with built-in Wireless so use S0
+   # Default location of serial port on Pi models 3 and Zero W
+   SERIAL_PORT = '/dev/ttyS0'
+else:
+   # Go back to using AMA0
+   # Default location of serial port on non wireless models (Original Zero and pre 3 Pi models)
+   SERIAL_PORT = '/dev/ttyAMA0'
 
-# Default location of serial port on Pi models 3 and Zero W
-# SERIAL_PORT =   "/dev/ttyS0"
-
-#This sets up the serial port specified above. baud rate is the bits per second timeout seconds
-#port = serial.Serial(SERIAL_PORT, baudrate=2400, timeout=5)
+print("Using "+SERIAL_PORT)
 
 #This sets up the serial port specified above. baud rate  and no timeout
 port = serial.Serial(SERIAL_PORT, baudrate=2400)
@@ -73,7 +75,7 @@ while True:
 
     if checkSum != cs :
       qos = qos - 1
-      # print("-1" , qos)
+      print('Checksum Failed QOS = ' , qos)
       if qos < 1 :
         qos = 1
     else :
