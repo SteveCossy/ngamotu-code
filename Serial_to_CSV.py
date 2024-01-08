@@ -62,18 +62,19 @@ error = 0 #have not had any errors yet
 while True:
   try:
     rcv = port.readline() #read buffer until cr/lf
-    print("Serial Readline Data  = ", rcv)
+#    print("Serial Readline Data  = ", rcv)
 
+#   These lines were required to use with 6 Jan 2024 version of test generator
 #    rcv = str(rcv[:-3]) # This doesn't work.  I'd like to know why!
-    rcv = str(rcv[:-2])
-    rcv = rcv[:-1]
+#    rcv = str(rcv[:-2])
+#    rcv = rcv[:-1]
 
-#    rcv = rcv.rstrip("\r\n")  # Previous line used on site 6 Jan 2023 (Python 2)
+    rcv = rcv.rstrip("\r\n")  # Previous line used on site 6 Jan 2023 (Python 2)
 
 #    print("Serial String Striped = ", rcv)
 
     synch,node,channel,data,cs = rcv.split(",")
-    print("rcv.split Data = : " + node + " " + channel + " " + data + " " + cs)
+#    print("rcv.split Data = : " + node + " " + channel + " " + data + " " + cs)
     #time.sleep(1)
     #Pacing delay to control rate of upload data
 
@@ -88,7 +89,7 @@ while True:
         qos = 1
     else :
       qos = qos + 1
-      print('Checksum Passed! QOS = ' , qos)
+ #     print('Checksum Passed! QOS = ' , qos)
       if qos > 100 :
         qos = 100
       CurrentTime = datetime.datetime.now().isoformat()
