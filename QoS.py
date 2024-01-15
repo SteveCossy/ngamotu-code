@@ -36,13 +36,14 @@ MQTT_PORT     = MQTTparam['Port']
 MQTT_USER     = MQTTparam['User']
 MQTT_PASSWORD = MQTTparam['Password']
 
-# We have a Pi with built-in Wireless so use S0
-# Default location of serial port on Pi models 3 and Zero W
-SERIAL_PORT = '/dev/ttyS0'
-
-# Go back to using AMA0
-# Default location of serial port on non wireless models (Original Zero and pre 3 Pi models)
-#   SERIAL_PORT = '/dev/ttyAMA0'
+if os.path.isfile('/dev/ttyS0'):
+   # We have a Pi with built-in Wireless so use S0
+   # Default location of serial port on Pi models 3 and Zero W
+   SERIAL_PORT = '/dev/ttyS0'
+else:
+   # Go back to using AMA0
+   # Default location of serial port on non wireless models (Original Zero and pre 3 Pi models)
+   SERIAL_PORT = '/dev/ttyAMA0'
 
 print ("Using "+SERIAL_PORT)
 
@@ -61,16 +62,16 @@ error = 0 #have not had any errors yet
 while True:
   try:
     rcv = port.readline() #read buffer until cr/lf
-    print("Serial Readline Data  = ", rcv)
+#    print("Serial Readline Data  = ", rcv)
 
 #   These lines were required to use with 6 Jan 2024 version of test generator
 #    rcv = str(rcv[:-3]) # This doesn't work.  I'd like to know why!
-    rcv = str(rcv[:-2])
-    rcv = rcv[:-1]
+#    rcv = str(rcv[:-2])
+#    rcv = rcv[:-1]
 
-#    rcv = rcv.rstrip("\r\n")  # Previous line used on site 6 Jan 2023 (Python 2)
+    rcv = rcv.rstrip("\r\n")  # Previous line used on site 6 Jan 2023 (Python 2)
 
-    print("Serial String Striped = ", rcv)
+#    print("Serial String Striped = ", rcv)
 
     synch,node,channel,data,cs = rcv.split(",")
 #    print("rcv.split Data = : " + node + " " + channel + " " + data + " " + cs)
