@@ -52,7 +52,14 @@ port = serial.Serial(SERIAL_PORT, baudrate=2400)
 #Connect to MQTT
 client = mqtt.Client()
 client.username_pw_set(MQTT_USER,MQTT_PASSWORD)
-client.connect(MQTT_BROKER,MQTT_PORT)
+
+try:
+   CurrentTime = datetime.datetime.now().isoformat()
+   print ('Connecting:' , CurrentTime )
+   client.connect(MQTT_BROKER,MQTT_PORT)
+except:
+   print ('Connect failed.')
+
 client.loop_start()
 qos = 10
 timestamp = time.time()
@@ -77,13 +84,14 @@ while True:
     #time.sleep(1)
     #Pacing delay to control rate of upload data
 
-    checkSum = int(node) + int(channel) + int(data) %256
+#    checkSum = int(node) + int(channel) + int(data) %256 # changed 17 Jan 24 at Andrew's request
+    checkSum = int(node) + int(channel) + int(data)
     cs = int(cs)
     #print(checkSum,cs)
 
     if checkSum != cs :
       qos = qos - 1
-      print('Checksum Failed QOS = ' , qos)
+      print('Checksum (' + str(checkSum) + ') Failed. QOS = ' , qos)
       if qos < 1 :
         qos = 1
     else :
