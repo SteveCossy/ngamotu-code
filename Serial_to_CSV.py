@@ -30,11 +30,19 @@ ConfPathFile = os.path.join(HOME_DIR, AUTH_FILE)
 
 ConfigDict = toml.load(ConfPathFile)
 MQTTparam = ConfigDict.get('econode')
-print (MQTTparam)
+# print (MQTTparam)
+
 MQTT_BROKER   = MQTTparam['Broker']
 MQTT_PORT     = MQTTparam['Port']
 MQTT_USER     = MQTTparam['User']
 MQTT_PASSWORD = MQTTparam['Password']
+
+print ( \
+   "Broker:", MQTT_BROKER, \
+   "Port:",   MQTT_PORT, \
+   "User:",   MQTT_USER, \
+   )
+
 
 # We have a Pi with built-in Wireless so use S0
 # Default location of serial port on Pi models 3 and Zero W
@@ -68,7 +76,7 @@ error = 0 #have not had any errors yet
 while True:
   try:
     rcv = port.readline() #read buffer until cr/lf
-    print("Serial Readline Data  = ", rcv)
+#    print("Serial Readline Data  = ", rcv)
 
 #   These lines were required to use with 6 Jan 2024 version of test generator
 #    rcv = str(rcv[:-3]) # This doesn't work.  I'd like to know why!
@@ -77,7 +85,7 @@ while True:
 
 #    rcv = rcv.rstrip("\r\n")  # Previous line used on site 6 Jan 2023 (Python 2)
 
-    print("Serial String Striped = ", rcv)
+    print("Serial String = ", rcv)
 
     synch,node,channel,data,cs = rcv.split(",")
 #    print("rcv.split Data = : " + node + " " + channel + " " + data + " " + cs)
@@ -107,7 +115,7 @@ while True:
                   'channel':channel,
                   'data':data
                   }
-      print ( 'Save2CSV', DATALIST )
+#      print ( 'Save2CSV', DATALIST )
       json_data = json.dumps( DATALIST, separators=(',', ':') )
       client.publish('penguin/gusto-raw/'+channel, json_data )
 
